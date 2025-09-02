@@ -2,22 +2,40 @@ package org.example.crud
 
 import enumeradores.Material
 import org.example.entidades.CaixaDAgua
+import java.sql.Connection
+
+fun criarTabelaCaixa(){
+    val conectar = EntidadeJDBC(
+        url = "jdbc:postgresql://localhost:5432/postgres",
+        usuario = "postgres",
+        senha = "postgres"
+    )
+    //Colocar o nome da tabela o mesmo nome da entidade
+    val sql = "CREATE TABLE IF NOT EXISTS CaixaDAgua " +
+            " (id serial NOT NULL PRIMARY KEY, " +
+        "capacidade float, " +
+        "cor varchar(255), "+
+        "peso float, "+
+        "preco float, "+
+        "altura float, "+
+        "largura float,"+
+        "profundidade float, "+
+        "tampa float, "+
+        "material float, "+
+        "marca varchar(255) "+
+            ")"
+
+    val banco = conectar.conectarComBanco()
+    val enviarParaBanco = banco!!.createStatement().executeQuery(sql)
+
+    println(enviarParaBanco)
+
+    banco.close()
+
+}
 
 fun cadastrarCaixa(){
-    /*
-    *
-    val capacidade : Int,
-    val cor : String,
-    val peso : Double,
-    val preco : BigDecimal,
-    val altura : Double,
-    val largura : Double,
-    val profundidade : Double,
-    val tampa : String,
-    val material : Material,
-    val marca : String,
-    *
-    * */
+
     println("Escolha o material do qual a caixa é composta: ")
     println("1 - POLIETILENO")
     println("1 - PLASTICO")
