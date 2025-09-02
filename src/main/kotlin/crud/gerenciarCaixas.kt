@@ -26,7 +26,7 @@ fun criarTabelaCaixa(){
             ")"
 
     val banco = conectar.conectarComBanco()
-    val enviarParaBanco = banco!!.createStatement().executeQuery(sql)
+    val enviarParaBanco = banco!!.createStatement().execute(sql)
 
     println(enviarParaBanco)
 
