@@ -1,6 +1,8 @@
 package org.example.ui
 
 import org.example.crud.cadastrarCaixa
+import org.example.crud.excluirCaixa
+import org.example.crud.listarCaixas
 
 fun menu(){
     do {
@@ -19,9 +21,14 @@ fun menu(){
                 println("Cadastrando caixa...")
                 cadastrarCaixa()
             }
-            2 -> println("editando caixa...")
-            3 -> println("listar caixas...")
-            4 -> println("excluindo caixa...")
+            2 -> println { "editando caixa..." }
+            3 -> { println ("listar caixas...")
+                listarCaixas()
+            }
+            4 -> {
+                println("excluindo caixa...")
+                excluirCaixa()
+            }
             else -> println("Opcao invalida")
         }
     } while (opcao != 0)
