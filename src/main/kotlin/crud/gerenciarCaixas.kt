@@ -38,7 +38,7 @@ fun criarTabelaCaixa(){
 
 }
 
-fun cadastrarCaixa() {
+fun cadastrarCaixa(id : Int) {
 
     println("Escolha o material do qual a caixa é composta: ")
     println("1 - POLIETILENO")
@@ -96,27 +96,88 @@ fun cadastrarCaixa() {
         material = material,
         marca = marca
     )
-    val banco = conectar.conectarComBanco()!!.prepareStatement(
-        "INSERT INTO CaixaDAgua " +
-                " (capacidade, cor, peso, preco, altura, largura, profundidade, tampa, material, marca)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
+    val banco = conectar.conectarComBanco()!!
+    if (id == 0){
+        val salvar = banco.prepareStatement(
+            "INSERT INTO CaixaDAgua " +
+                    " (capacidade, cor, peso, preco, altura, largura, profundidade, tampa, material, marca)" +
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
 
-    )
-    banco.setInt(1, c.capacidade)
-    banco.setString(2, c.cor)
-    banco.setDouble(3, c.peso)
-    banco.setString(4, c.preco.toString())
-    banco.setDouble(5, c.altura)
-    banco.setDouble(6, c.largura)
-    banco.setDouble(7, c.profundidade)
-    banco.setString(8, c.tampa)
-    banco.setString(9, c.material.name)
-    banco.setString(10, c.marca)
-    banco.executeUpdate() // Isso fará um COMMIT no banco
+        )
+        salvar.setInt(1, c.capacidade)
+        salvar.setString(2, c.cor)
+        salvar.setDouble(3, c.peso)
+        salvar.setString(4, c.preco.toString())
+        salvar.setDouble(5, c.altura)
+        salvar.setDouble(6, c.largura)
+        salvar.setDouble(7, c.profundidade)
+        salvar.setString(8, c.tampa)
+        salvar.setString(9, c.material.name)
+        salvar.setString(10, c.marca)
+        salvar.executeUpdate() // Isso fará um COMMIT no banco
+        salvar.close()
+    }else{
+        val sql = "UPDATE CaixaDAgua SET " +
+                " capacidade = ?, " +
+                " cor = ?, " +
+                " peso = ?, " +
+                " preco = ?, " +
+                " altura = ?, " +
+                " largura = ?, " +
+                " profundidade = ?, " +
+                " tampa = ?, " +
+                " material = ?, " +
+                " marca = ? " +
+                " WHERE id = ?"
+
+            val editar = banco.prepareStatement(sql)
+            editar.setInt(11, id)
+            editar.setInt(1, c.capacidade)
+            editar.setString(2, c.cor)
+            editar.setDouble(3, c.peso)
+            editar.setString(4, c.preco.toString())
+            editar.setDouble(5, c.altura)
+            editar.setDouble(6, c.largura)
+            editar.setDouble(7, c.profundidade)
+            editar.setString(8, c.tampa)
+            editar.setString(9, c.material.name)
+            editar.setString(10, c.marca)
+            editar.executeUpdate() // Isso fará um COMMIT no banco
+            editar.close()
+    }
     banco.close()// Fecha a transação e a conexão com o banco
+
 
 }
 fun editarCaixa(){
+    println("Digite o ID que deseja editar")
+    var id = readln().toInt()
+
+    val banco = conectar.conectarComBanco()
+    val sqlBusca = "SELECT * FROM CaixaDAgua WHERE id = ?"
+    val resultados = banco!!.prepareStatement(sqlBusca)
+    resultados.setInt(1,id)
+    val retorno = resultados.executeQuery()
+
+
+    while (retorno.next()){
+        println("----------------------------------------------------------------------------------------")
+        println("ID: ${retorno.getString("id")}")
+        id = retorno.getString("id").toInt()
+        println("capacidade: ${retorno.getString("capacidade")}")
+        println("cor: ${retorno.getString("cor")}")
+        println("peso: ${retorno.getString("peso")}")
+        println("preco: ${retorno.getString("preco")}")
+        println("altura: ${retorno.getString("altura")}")
+        println("largura: ${retorno.getString("largura")}")
+        println("profundidade: ${retorno.getString("profundidade")}")
+        println("tampa: ${retorno.getString("tampa")}")
+        println("material: ${retorno.getString("material")}")
+        println("marca: ${retorno.getString("marca")}")
+    }
+    println("Faça suas alterações: ")
+    cadastrarCaixa(id)
+    banco.close()
 
 }
 
@@ -172,10 +233,14 @@ fun excluirCaixa(){
             val deletar = banco.prepareStatement( "DELETE FROM CaixaDAgua WHERE id = ?")
                 deletar.setInt(1, id)
                 deletar.executeUpdate()
+                deletar.close()
+
         }
         else -> {
             println("Operação cancelada!")
         }
     }
     val sqlDeleta = "DELETE FROM CaixaDAgua WHERE id = ?"
+    banco.close()
+
 }
